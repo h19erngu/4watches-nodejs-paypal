@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <%- include('../partials/head'); %>
+</head>
+
+<body>
+    <!--header börjar -->
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <!--header slut -->
+
+
+    <div id="app">
+        <!--- Början av slideshow-->
+
+        <!-- Slut på slideshow-->
+
+
+        <div class="imgbox">
+            <img src="/upload/slideshow1.jpg" alt="Welcome Image" style="width:100%;">
+            <div class="imgtext">
+                <h4>Hello future customers!</h4>
+                <p style="color:white;">What a beautiful sunrise, welcome to our shoppingsite - 4WATCHES</p>
+            </div>
+        </div>
+        <!--Produkter start -->
+
+        <!-- <hr class="products-line">-->
+
+        <%if ( !locals.session.user) { %>
+
+            <% }else{ %>
+
+                <div class="products-header">
+                    <h1>Your Deals</h1>
+                </div>
+                <div class="products-card-stor-Container">
+                    <div class="products-cards" v-for="deal in deals" v-bind:key="deal.productID">
+                        <div class="products-cards-content">
+                            <img :src="deal.productImage" alt="klocka">
+                            <h4>{{ deal.productName }}</h4>
+                            <div class="products-text">
+                                <p>{{ deal.description }}</p>
+                            </div>
+                            <p style="color:red;"><b>{{deal.price}} kr</b></p>
+                            <button type=" button" class="btn btn-primary" v-on:click="addToCart(deal.productID)"><i class="fa fa-shopping-bag"></i></button>
+                            <button type=" button" class="btn btn-primary"
+                                v-on:click="showProductByProductID(deal.productID)">More info</button>
+                        </div>
+                    </div>
+                </div>
+                <%}%>
+                    <div class="products-header">
+                        <h1>Our Watches</h1>
+                    </div>
+                    <div class="products-card-stor-Container">
+                        <div class="products-cards" v-for="product in products" v-bind:key="product.productID">
+                            <div class="products-cards-content">
+                                <img :src="product.productImage" alt="klocka">
+                                <h4>{{ product.productName }}</h4>
+                                <div class="products-text">
+                                    <p>{{ product.description }}</p>
+                                </div>
+                                <p>{{product.price}} kr</p>
+                                <button type=" button" class="btn btn-primary"
+                                    v-on:click="addToCart(product.productID)"><i class="fa fa-shopping-bag"></i></button>
+                                <button type=" button" class="btn btn-primary"
+                                    v-on:click="showProductByProductID(product.productID)">More info</button>
+                            </div>
+                        </div>
+                    </div>
+    </div>
+    <!-- Produkter slut -->
+
+    <!--footer börjar -->
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+    <!--footer slut -->
+    <script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                products: [],
+                categories: [],
+                deals: [],
+                arrayMatchedProducts: [],
+            },
+            methods: {
+
+                showProductByProductID(productID) {
+                    window.location.href = "/public/products/" + productID
+                },
+                addToCart(productID) {
+                    $.ajax({
+                        url: '/cart/add/' + productID,
+                        type: 'GET',
+                        success: () => {
+                            window.location.reload()
+                        }
+                    });
+                },
+                showProductByProductID(productID) {
+                    window.location.href = "/public/products/" + productID
+                },
+
+            },
+            mounted() {
+                var self = this;
+                $.getJSON("/productsnodeals/", function (jsondata) {
+                    self.products = jsondata
+                });
+                $.getJSON("/products/category/deals ", function (jsondata) {
+                    arr = []
+                    for (let i of jsondata) {
+                        var productImage = i.productImage.slice(2)
+                        i.productImage = productImage
+                        arr.push(i)
+                    }
+                    console.log(arr)
+                    self.deals = arr
+                });
+
+            }
+        });
+    </script>
+</body>
+
+</html>

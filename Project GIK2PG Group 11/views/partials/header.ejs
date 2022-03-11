@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+
+</head>
+
+<!--header börjar -->
+<div id="header">
+    
+ <!--<div style="text-align: center;"> <b> Welcome Back {{session.userName}} </b></div>-->
+    <div class="header">
+        <div class="logo">
+            <a href="/public/home"><img src="/upload/logo.png" alt="logo" height="150px" width="150px"></a>
+        </div>
+        <div class="site-name">
+            <p>4WATCHES</p>
+        </div>
+        <div class="basket" >
+            <%if ( !locals.session.user) { %>
+
+                <button type="submit" class="btn btn-light" data-toggle="modal" data-target="#loginModal">
+                    Sign in
+                </button>
+                <!--<button type="submit" class="btn btn-light" data-toggle="modal" data-target="#registerModal">
+                    Sign up
+                </button>-->
+                
+
+
+                <a style="color: white;" href="/public/cart" class="text-light nounderline"><i class="fas fa-shopping-basket"></i>
+                            (<%if(typeof locals.session.cart !=="undefined") { %>
+                                <%=locals.session.cart.length%>
+                                    <%}else{%>
+                                        0
+                                    <%}
+                            %>)
+
+                <% }else{ %>
+
+
+                    <a href="/public/profile"><i class="fa fa-user icon"></i></a>
+
+
+                <a style="color: white;" href="/public/cart" class="text-light nounderline"><i class="fas fa-shopping-basket"></i>
+                    (<%if (typeof locals.session.cart !=="undefined" ) { %>
+                                <%=locals.session.cart.length%>
+                                    <%}else{%>
+                                        0
+                                    <%}
+                            %>)
+                        </a>
+                <form action="/logout" method="GET">
+                    <button class="btn btn-light" type="submit" onclick="signOut();">Log Out</button>
+                </form>
+                <%}%>
+        </div>
+    </div>
+    <!--header slut -->
+    <!--meny börjar -->
+    <div class="meny">
+        <div class="meny-Link">
+            <ul>
+                <li><a href="/public/home">Home</a></li>
+            </ul>
+        </div>
+        <div class="meny-Link meny-Link-toggle">
+            <ul>
+                <li><i class="fas fa-bars"></i></li>
+            </ul>
+        </div>
+        <nav class="meny-Items">
+            <div class="meny-Link">
+                <ul>
+                    <div class="dropdown">
+                        <button class="dropbtn"></button><a href="/public/products">Products</a>
+                        <div class="dropdown-content">
+                            <a href="/public/category/male">Male</a>
+                            <a href="/public/category/female">Female</a>
+                            <a href="/public/category/kids">Kids</a>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+            <div class="meny-Link">
+                <ul>
+                    <li><a href="/public/about-us">About us</a></li>
+                </ul>
+            </div>
+            <div class="meny-Link">
+                <ul>
+                    <input type="text" id="myInput" onkeyup="dynamicSearch()" placeholder="Search for products.." title="Type in a name">
+                    <ul id="myUL">
+                        <div v-for="product in products" v-bind:key="product.productID">
+                            <li style="display:none" ><a class="search-results" role="button" v-on:click="showProductByProductID(product.productID)">{{product.productName}}</a>
+                            </li>
+                        </div>
+                    </ul>
+                </ul>
+            </div>
+
+        </nav>
+    </div>
+
+
+    <!--meny Slut-->
+
+
+    <!-- Login modal start-->
+    <div class="modal fade" id="loginModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <h1>Login with your account</h1>
+                        <div class="form-group">
+                            <label for="userName"></label>
+                            <input type="text" class="form-control" placeholder="Username" id="loginUserName">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="password" ></label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                        </div>
+                        <button type="button" class="btn btn-primary float-right" v-on:click="signIn">Sign In</button>
+                        <hr>
+                        <h4>OR</h4>
+                        <h4>Sign in using Google</h4>
+                        <div class="g-signin2" onclick="ClickLogin()" data-onsuccess="onSignIn"></div>
+                    
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--login modal Slut-->
+    <!--register modal Start-->
+    <div class="modal fade" id="registerModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="userName">Username</label>
+                            <input type="text" class="form-control" id="regUsername">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="text" class="form-control" id="regPassword">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adress">Adress</label>
+                            <input type="text" class="form-control" id="regAdress">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="firstname">Firstname</label>
+                            <input type="text" class="form-control" id="regFirstname">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastname">Lastname</label>
+                            <input type="text" class="form-control" id="regLastname">
+                        </div>
+
+                        <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary float-right" v-on:click="signUp">Sign Up</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--register modal end-->
+</div>
+
+
+<script src="http://code.jquery.com/jquery-3.5.1.min.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js "></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js "></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js "></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    function classToggle() {
+        const navs = document.querySelectorAll('.meny-Items')
+        navs.forEach(nav => nav.classList.toggle('meny-ToggleShow'));
+    }
+    document.querySelector('.meny-Link-toggle')
+        .addEventListener('click', classToggle);
+</script>
+
+<script>
+</script>
+<script>
+    const v = new Vue({
+        el: "#header",
+        data: {
+            products: [],
+            categories: [],
+            session: {},
+        },
+        methods: {
+
+
+            showProductByProductID(productID) {
+                window.location.href = "/public/products/" + productID
+            },
+            signIn() {
+                var user = {
+                    userName: $('#loginUserName').val(),
+                    password: $('#loginPassword').val()
+                }
+                $.ajax({
+                    url: '/login',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(user),
+                    processData: false,
+                    success: (data) => {
+                        //window.location.href = window.location.href
+                        $('#loginModal').empty();
+                        $('#loginModal').modal('hide');
+                        //if(data.json){
+                        //alert(data.json);
+                        //}
+                        location.reload();
+                    }
+                })
+            },
+            signUp() {
+                var user = {
+                    userName: $('#regUsername').val(),
+                    password: $('#regPassword').val(),
+                    adress: $('#regAdress').val(),
+                    firstName: $('#regFirstname').val(),
+                    lastName: $('#regLastname').val(),
+                }
+                $.ajax({
+                    url: '/register',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(user),
+                    processData: false,
+                    success: () => {
+                        var location = window.location.href
+                    }
+                })
+            },
+            //search
+        },
+        mounted() {
+            var self = this;
+            $.getJSON("/products", function(jsondata) {
+                self.products = jsondata
+            });
+            
+            var session;
+            $.getJSON("/session/info", function(jsondata) {
+                self.session = jsondata.user
+            });
+    
+         
+        }
+    });
+</script>
+
+<script>
+    function dynamicSearch() {
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("myUL");
+        li = ul.getElementsByTagName("li");
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (input.value) {
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+
+    var clicked = false; //Global Variable
+    function ClickLogin() {
+        clicked = true;
+    }
+
+    function onSignIn(googleUser) {
+
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+    
+
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+
+        $(".data").css("display", "block");
+        $(".g-signin2").css("display", "none");
+        var user = {
+            userName: profile.getEmail(),
+            //password: $('#regPassword').val(),
+            //adress: $('#regAdress').val(),
+            //role: customer
+            //token: id_token,
+            firstName: profile.getGivenName(),
+            lastName: profile.getFamilyName(),
+        }
+
+        $.ajax({
+            url: '/userinfo',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(user),
+            processData: false,
+            success: (data) => {
+                $('#loginModal').empty();
+                $('#loginModal').modal('hide');
+            }
+        })
+        if (clicked) {
+            clicked = false;
+
+            setTimeout(function(){ location.reload(); }, 1000);
+        }
+        //alert('Login success!');
+        //window.location.replace('/public/products');
+    }
+
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function() {
+            alert("You have been signed out successfully");
+            $(".data").css("display", "none");
+            $(".g-signin2").css("display", "block");
+        });
+    }
+</script>
+
+</html>

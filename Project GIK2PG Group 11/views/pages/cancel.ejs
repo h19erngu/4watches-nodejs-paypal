@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <%- include('../partials/head'); %>
+        <title>Products</title>
+        <script
+            src="https://www.paypal.com/sdk/js?client-id=AbhIvdlsTLooAyKNh03MgAjDxvJz1xoAi_ECa6y6GvUsboqqdsFA15qJ36LSt3MUDePGYwkPK29_wIYl">
+            </script>
+</head>
+
+<body>
+    <!--header börjar -->
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <!--header slut -->
+
+    <!--Korg börjar -->
+    <div class="cart-background">
+        <div class="cart-container" id="app">
+
+            <%if (typeof locals.session.cart=="undefined" || locals.session.cart.length==0 ) { %>
+
+                Your cart is currently empty!
+
+                <% }else{ %>
+                    <h1 class="cart-heading">Your Order Was Canceled!</h1>
+                    <h2 class="cart-heading">Please Try Again</h2>
+                   
+
+
+
+                    
+
+                    <!--TEST PAYPAL-->
+
+
+                    <%}%>
+                        <span class="span-buttom"></span>
+        </div>
+    </div>
+    <!--Korg slut -->
+
+
+</body>
+
+
+<!--header börjar -->
+<footer>
+    <%- include('../partials/footer'); %>
+</footer>
+<!--header slut -->
+
+
+<script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+    //function randomDate(start, end) {
+    //const start = Date.now();
+    // const end = 2022 - 03 - 31;
+    // var date = new Date(+start + Math.random() * (end - start));
+    // return date;
+    //  }
+
+
+    const vm = new Vue({
+        el: "#app",
+        data: {
+            products: [],
+            cartItem: [],
+            total: '',
+        },
+        methods: {
+
+
+
+            showProductByProductID(productID) {
+                window.location.href = "/public/products/" + productID
+            },
+            addToCart(productID) {
+                $.ajax({
+                    url: '/cart/add/' + productID,
+                    type: 'GET',
+                    success: () => {
+                        window.location.reload()
+                    }
+                });
+            },
+
+
+            calculateTotal() {
+                var self = this;
+                var total = 0;
+                self.total = 0;
+                for (let i = 0; i < self.products.length; i++) {
+                    total += self.products[i].price * self.products[i].quantity
+                }
+                self.total = total
+            },
+            //test PAYPAL
+
+
+        },
+
+        mounted() {
+            var self = this;
+            $.getJSON("/cartcontent", function (jsondata) {
+                self.products = jsondata
+                var total = 0;
+                for (let i = 0; i < self.products.length; i++) {
+                    total += self.products[i].price * self.products[i].quantity
+                }
+                console.log(total)
+                self.total = total
+            });
+        }
+
+
+    });
+</script>
+
+</html>

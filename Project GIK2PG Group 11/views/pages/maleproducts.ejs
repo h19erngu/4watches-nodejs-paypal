@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+</head>
+
+<body>
+    <!--header börjar -->
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <!--header slut -->
+
+    <!--Procuts Start-->
+    <div class="products-header">
+        <h1>MALE WATCHES</h1>
+    </div>
+    <div class="products-card-stor-Container" id="app">
+        <div class="products-cards" v-for="product in products" v-bind:key="product.productID">
+            <div class="products-cards-content">
+                <img :src="product.productImage" alt="klocka">
+                <h4>{{ product.productName }}</h4>
+                <div class="products-text">
+                    <p>{{ product.description }}</p>
+                </div>
+                <p>{{product.price}} kr</p>
+                <button type=" button" class="btn btn-primary" v-on:click="addToCart(product.productID)"><i class="fa fa-shopping-bag"></i></button>
+                <button type=" button" class="btn btn-primary" v-on:click="showProductByProductID(product.productID)">More info</button>
+            </div>
+        </div>
+    </div>
+
+    <!--Products end-->
+
+    <!--header börjar -->
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+    <!--header slut -->
+
+    <script src="http://code.jquery.com/jquery-3.5.1.min.js "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js "></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js "></script>
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                products: [],
+                categories: [],
+                arrayMatchedProducts: [],
+            },
+            methods: {
+
+                searchNow() {
+                    var search = $("#searchField").val();
+                    var self = this;
+                    $.ajax({
+                        url: '/searchProduct/' + search,
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: (arrayMatchedProducts) => {
+                            $(searchResult).empty();
+
+                            for (var i = 0; i < arrayMatchedProducts.length; i++) {
+                                $(searchResult).append('<tr><th scope="row">' + arrayMatchedProducts[i].productName + '</td>' +
+                                    '<td>' + arrayMatchedProducts[i].productID + '</td> <td>' + arrayMatchedProducts[i].description + '</td><td>' + arrayMatchedProducts[i].price + '</td>' +
+                                    '<td>' + arrayMatchedProducts[i].category + '</td></tr><br>'
+                                );
+                                if (faq.length == 0) {
+                                    alert('ho');
+                                }
+                            }
+                        },
+                    })
+                },
+
+                showProductByProductID(productID) {
+                    window.location.href = "/public/products/" + productID
+                },
+                addToCart(productID) {
+                    $.ajax({
+                        url: '/cart/add/' + productID,
+                        type: 'GET',
+                        success: () => {
+                            window.location.reload()
+                        }
+                    });
+                },
+
+            },
+            mounted() {
+                var self = this;
+                /* $.getJSON("/products ", function(jsondata) {
+                     self.products = jsondata
+                 });*/
+                /* $.getJSON("/categories ", function(jsondata) {
+                     self.categories = jsondata
+                 });*/
+                $.getJSON("/products/category/male ", function(jsondata) {
+                    arr = []
+                    for (let i of jsondata) {
+                        var productImage = i.productImage.slice(2)
+                        i.productImage = productImage
+                        arr.push(i)
+                    }
+                    self.products = arr
+                });
+
+            }
+        });
+    </script>
+
+</body>
+
+</html>

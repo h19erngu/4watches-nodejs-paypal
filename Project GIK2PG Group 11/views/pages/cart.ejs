@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <%- include('../partials/head'); %>
+        <title>Shopping Cart</title>
+
+        <script
+            src="https://www.paypal.com/sdk/js?client-id=AbhIvdlsTLooAyKNh03MgAjDxvJz1xoAi_ECa6y6GvUsboqqdsFA15qJ36LSt3MUDePGYwkPK29_wIYl">
+            </script>
+</head>
+
+<body>
+    <!--header börjar -->
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <!--header slut -->
+
+    <!--Korg börjar -->
+    <div class="cart-background">
+        <div class="cart-container" id="app">
+
+            <%if (typeof locals.session.cart=="undefined" || locals.session.cart.length==0 ) { %>
+
+                Your cart is currently empty!
+
+                <% }else{ %>
+
+                    <div class="cart" v-for="product in products" v-bind:key="product.productID">
+
+                        <img class="cart-object" :src="product.productImage" alt="Watch">
+                        <div class="cart-body">
+                            <h3 class="cart-heading">{{ product.productName }}</h3>
+                            <p>{{ product.description }}</p>
+                            <p>{{product.price}} kr</p>
+                            <p>Quantity: {{product.quantity}}</p>
+                        </div>
+
+                        <div class="select">
+                            <select class="cart-select" v-bind:id="product.productID"
+                                @change="changeQuantityOfProduct(product.productID)">
+                                <option value="0" selected hidden>{{ product.quantity }}</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                            </select>
+                            <button type="button" class="btn btn-primary blackbutton float-right" data-dismiss="modal"
+                                v-on:click="deleteProductFromCart(product.productID)">Delete</button>
+                        </div>
+                    </div>
+                    <div class="cart">
+                        <h2 class="cart-heading">
+                            <center>Total Price: {{total}} kr</center>
+                        </h2>
+                    </div>
+
+                    <hr>
+                    <div class="cart">
+                        <div class="cart-body">
+
+                            <%if (locals.session.user) { %>
+
+                                <p>
+                                    <!-- <form action="/pay2" method="post">
+                        <input type="submit" value="Buy">
+                    </form>-->
+                                    <center><button type="button" class="btn btn-dark float-right" style="width:100%;"
+                                            v-on:click="checkoutButton()">Check
+                                            out</button></center>
+                                </p>
+                                <% }else{ %>
+                                    <div class="info-body">
+                                        <h2 class="cart-heading">
+                                            <center>Contact Information</center>
+                                        </h2>
+                                        <form id="registerForm">
+                                            <div class="form-group">
+
+                                                <input type="text" class="form-control" id="conFirstname"
+                                                    placeholder="Enter your firstname" required>
+                                            </div>
+
+                                            <div class="form-group">
+
+                                                <input type="text" class="form-control" id="conLastname"
+                                                    placeholder="Enter your lastname" required>
+                                            </div>
+
+                                            <div class="form-group">
+
+                                                <input type="text" class="form-control" id="conAdress"
+                                                    placeholder="Enter your adress" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input type="email" class="form-control" id="conEmail"
+                                                    placeholder="Enter your email adress" required>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <p>
+                                        <!-- <form action="/pay2" method="post">
+                                    <input type="submit" value="Buy">
+                                        </form>-->
+                                        <center><button type="button" class="btn btn-dark float-right"
+                                                style="width:100%;" v-on:click="checkoutButtonWithForm()">Check
+                                                out</button></center>
+                                    </p>
+                                    <%}%>
+
+                        </div>
+                    </div>
+                    <!--   <div class="cart">
+                <div class="cart-body">
+                    <h2 class="cart-heading">Beräknad leverans</h2>
+                    <h4>Tors, 13.01. - Mån, 17.01.</h4>
+                </div>
+            </div>-->
+                    <hr>
+                    <!--   <div class="cart">
+                        <div class="cart-body">
+                            <h2 class="cart-heading">We Accept</h2>
+                            <i class="fab fa-cc-paypal fa-3x"></i>
+                        </div>
+                    </div>-->
+                    <!--TEST PAYPAL-->
+
+                    <%}%>
+                        <span class="span-buttom"></span>
+        </div>
+    </div>
+    <!--Korg slut -->
+
+
+</body>
+
+
+<!--header börjar -->
+<footer>
+    <%- include('../partials/footer'); %>
+</footer>
+<!--header slut -->
+
+
+<script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+
+
+
+    const vm = new Vue({
+        el: "#app",
+        data: {
+
+            products: [],
+            cartItem: [],
+            total: '',
+            session: {},
+        },
+        methods: {
+
+            showProductByProductID(productID) {
+                window.location.href = "/public/products/" + productID
+            },
+            addToCart(productID) {
+                $.ajax({
+                    url: '/cart/add/' + productID,
+                    type: 'GET',
+                    success: () => {
+                        window.location.reload()
+                    }
+                });
+            },
+            changeQuantityOfProduct(productID) {
+                var o = {
+                    quantity: $('#' + productID).val()
+                }
+                $.ajax({
+                    url: '/cart/remove/' + productID,
+                    type: 'PUT',
+                    data: o,
+                    success: () => {
+                        window.location.reload()
+                    }
+                });
+            },
+            deleteProductFromCart(productID) {
+                $.ajax({
+                    url: '/cart/delete/' + productID,
+                    type: 'DELETE',
+                    success: () => {
+                        window.location.reload()
+                    }
+                });
+            },
+            calculateTotal() {
+                var self = this;
+                var total = 0;
+                for (let i = 0; i < self.products.length; i++) {
+                    total += self.products[i].price * self.products[i].quantity
+                }
+                //console.log(total)
+                self.total = total
+                return total
+            },
+            //test PAYPAL
+            checkoutButton() {
+                var self = this;
+                var result = {};
+                result.total = this.calculateTotal();
+                $.ajax({
+                    url: '/pay',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(result),
+                    processData: false,
+                    success: (res) => {
+                        var self = this;
+                        window.location = res.forwardLink
+                    }
+                });
+            },
+            //checkout för oinloggad customer
+            checkoutButtonWithForm () {
+                console.log("with form")
+                var self = this;
+                var result = {};
+                if (!self.session) {
+                    result = {
+                        email: $('#conEmail').val(),
+                        firstName: $('#conFirstname').val(),
+                        lastName: $('#conLastname').val(),
+                        adress: $('#conAdress').val(),
+                    }
+                }
+                result.total = this.calculateTotal();
+                if (!result || !result.email || !result.firstName || !result.lastName || !result.adress){
+                    alert("Complete filling out the form")
+                }
+                else {
+                $.ajax({
+                    url: '/pay',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(result),
+                    processData: false,
+                    success: (res) => {
+                        var self = this;
+                        window.location = res.forwardLink
+                    }
+                });
+            }
+            },
+
+        },
+        mounted() {
+            var self = this;
+            $.getJSON("/cartcontent", function (jsondata) {
+                self.products = jsondata
+                var total = 0;
+                for (let i = 0; i < self.products.length; i++) {
+                    total += self.products[i].price * self.products[i].quantity
+                }
+                self.total = total
+            });
+            $.getJSON("/session/info", function (jsondata) {
+                self.session = jsondata.user
+            });
+        }
+
+
+    });
+</script>
+
+</html>

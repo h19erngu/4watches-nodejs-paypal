@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Admin Panel</title>
+</head>
+
+<body class="bg-dark">
+
+    <div class="container bg-light rounded p-5 mt-5" id="app">
+        <center>
+            <h2> Welcome {{session.userName}}
+            </h2>
+        </center>
+        <form action="/logout" method="GET">
+            <button class="btn float-right text-light" style="background-color: red;" type="submit"
+                onclick="signOut();">Log Out</button>
+        </form>
+        <button class="btn btn-primary" onclick="window.location.href='/public/admin';">Manage Users</button>
+        <button class="btn btn-primary" onclick="window.location.href='/public/adminproducts';">Manage Products</button>
+        <button class="btn btn-primary" onclick="window.location.href='/';">Back</button>
+        <!-- Products Table Start -->
+
+        <p>Here you can Add, View, Edit and Delete products.</p>
+        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#addProductModal"> Add
+            product
+        </button><br><br>
+        <table class="table-striped justify-content-center container-fluid">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="product in products" v-bind:key="product.productID">
+                    <th scope="row">{{ product.productID }}</th>
+                    <td><img :src="product.productImage" class="table-image" style="width: 100px; height: 110px;"></td>
+                    <td>{{ product.productName }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.price }} kr</td>
+                    <td>{{ product.categoryName }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#updateProductModal" v-on:click="showProductInUpdateForm(product.productID)">
+                            View
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Table Products end -->
+
+        <!-- update product Modal start -->
+
+        <div class="modal fade" id="updateProductModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Product</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <form id="formUpdate" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="productID">Product ID</label>
+                                <input type="text" class="form-control" name="updateProductID" id="updateProductID"
+                                    readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="productName">Product Name</label>
+                                <input type="text" class="form-control" name="updateProductName" id="updateProductName">
+
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" class="form-control" name=" " id="updateProductDescription">
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Price</label>
+                                <input type="text" class="form-control" name="updateProductPrice"
+                                    id="updateProductPrice">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="categoryID">Category</label>
+                                <select class="form-control" name="updateCategoryID" id="updateCategoryID">
+                                    <option value="1">Male</option>
+                                    <option value="2">Female</option>
+                                    <option value="3">Kids</option>
+                                    <option value="4">Deals</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="file">Choose picture</label>
+                                <input type="file" name="file" id="updateImage">
+                            </div>
+
+                            <button type="button" class="btn btn-danger float-right" data-dismiss="modal"
+                                v-on:click="deleteProduct">Delete</button>
+                            <input type="button" class="btn btn-primary float-right" value="Update"
+                                v-on:click="updateProduct()" />
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- update product Modal END -->
+
+        <!-- add Product Modal Start -->
+        <div class="modal fade" id="addProductModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <input type="text" readonly class="form-control-plaintext" id="productName" name="productName">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <form id="formAdd" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="productName">Product Name</label>
+                                <input type="text" class="form-control" id="addProductName">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" class="form-control" id="addDescription">
+                            </div>
+                            <div class="form-group">
+                                <label for="firstName">Price</label>
+                                <input type="text" class="form-control" id="addPrice">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="role">Category</label>
+                                <select class="form-control" id="addCategoryID">
+                                    <option value="1">Male</option>
+                                    <option value="2">Female</option>
+                                    <option value="3">Kids</option>
+                                    <option value="4">Deals</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="file">Choose picture</label>
+                                <input type="file" name="file" id="addImage">
+                            </div>
+
+                            <button type="button" class="btn btn-secondary float-right"
+                                data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary float-right" v-on:click="addProduct">Add
+                                Product</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- add Product Modal End -->
+        </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- Script Start -->
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                orders: [],
+                products: [],
+                reviews: [],
+
+                session: {},
+            },
+
+            methods: {
+
+                showProductInUpdateForm(productID) {
+                    $.ajax({
+                        url: '/product/' + productID,
+                        type: 'GET',
+                        success: (product) => {
+                            $('#updateProductName').val(product.productName);
+                            $('#updateProductDescription').val(product.description);
+                            $('#updateProductPrice').val(product.price);
+                            $('#updateProductCategory').val(product.categoryID);
+                            $('#updateProductID').val(product.productID);
+                        }
+                    });
+                    $('#updateProductModal').modal('show');
+                },
+
+                //update prduct 
+                updateProduct() {
+                    var fd = new FormData();
+                    var file = $('#updateProductModal #updateImage')[0].files[0];
+                    fd.append('file', file);
+                    var product = {
+                        productName: $('#updateProductName').val(),
+                        description: $('#updateProductDescription').val(),
+                        price: $('#updateProductPrice').val(),
+                        productID: $('#updateProductID').val(),
+                        categoryID: $('#updateCategoryID').val()
+                    };
+                    fd.append('product', JSON.stringify(product));
+                    $.ajax({
+                        url: '/file/update',
+                        type: 'POST',
+                        contentType: false,
+                        data: fd,
+                        processData: false,
+                        success: () => {
+                            var self = this;
+                            $.getJSON('/products/', function (jsondata) {
+                                self.products = jsondata;
+                            });
+                            $('#updateProductModal').modal('hide');
+                        },
+                    });
+                },
+
+                deleteProduct() {
+                    var product = {
+                        productID: $('#updateProductModal #updateProductID').val()
+                    }
+                    $.ajax({
+                        url: '/product/' + product.productID,
+                        type: 'DELETE',
+                        success: () => {
+                            var self = this;
+                            $.getJSON("/products/", function (jsondata) {
+                                self.products = jsondata;
+                                $('updateProductModal').modal('hide');
+                            });
+
+                        },
+                    });
+                },
+
+                addProduct() {
+                    var fd = new FormData();
+                    var file = $('#addProductModal #addImage')[0].files[0];
+                    fd.append('file', file);
+                    var product = {
+                        productName: $('#addProductName').val(),
+                        description: $('#addDescription').val(),
+                        price: $('#addPrice').val(),
+                        categoryID: $('#addCategoryID').val()
+                    }
+                    fd.append('product', JSON.stringify(product));
+
+                    $.ajax({
+                        url: '/file/',
+                        type: 'POST',
+                        contentType: false,
+                        data: fd,
+                        processData: false,
+                        success: () => {
+                            var self = this;
+                            $.getJSON("/products/", function (jsondata) {
+                                self.products = jsondata;
+                                $('#addProductModal').empty();
+                                $('#addProductModal').modal('hide');
+
+
+                            });
+                        }
+
+                    });
+
+                },
+            },
+            mounted() {
+                var self = this;
+                $.getJSON("/products/", function (jsondata) {
+                    self.products = jsondata;
+                });
+                var session;
+                $.getJSON("/session/info", function (jsondata) {
+                    self.session = jsondata.user
+                });
+            },
+        });
+    </script>
+    <!-- Script End -->
+    <script>
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+                alert("You have been signed out successfully");
+                $(".data").css("display", "none");
+                $(".g-signin2").css("display", "block");
+            });
+        }
+    </script>
+</body>
+
+</html>

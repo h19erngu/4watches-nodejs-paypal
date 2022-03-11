@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+        <title> hahaha</title>
+</head>
+
+<body>
+    <!--header börjar -->
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <!--header slut -->
+    <div id="app">
+
+        <!--Prduct börjar-->
+        <div class="product-info-container">
+            <div class="card-product-info">
+                <div class="card-product-content">
+                    <h1>{{ products.productName }}</h1>
+                    <img :src="products.productImage">
+                    <p class="product-price"><b>{{products.price}} kr</b></p>
+                    <p>{{ products.description }}</p>
+                    <p><i class="fa-solid fa-star star-class"></i> {{ averageRating }}</p>
+
+                    <button type="button" class="btn btn-primary button-buy"
+                        v-on:click="addToCart(products.productID)">Add to cart</button>
+                    <button class="button-back" onclick="window.location.href='/public/products';">Back</button>
+                    <!--reviews-->
+                    <!--
+                <div class="review-product-content">
+                    <h1> Reviews</h1>
+                    <div class="review-content" v-for="review in reviews" v-bind:key="review.reviewID">
+                        <h3 class="review-rating">{{review.rating}}</h3>
+                        <h2>{{review.reviewTitle}}</h2>
+                        <p>{{ review.reviewComment }}</p>
+                        <p class="about-vat">Written by: {{review.userID}}</p>
+                        -->
+                </div>
+            </div>
+        </div>
+
+
+        <div v-if="reviews.length > 0">
+            <div class="slideshow-container">
+                <div class="cart mySlides" v-for="review in reviews" v-bind:key="review.reviewID"
+                    style="margin: 0 auto; border-radius: 10px;">
+                    <div class="cart-body">
+                        <h3 class="cart-heading">
+                            <p>
+                                <center> {{review.userName}} ({{review.rating}}<i
+                                        class="fa-solid fa-star star-class"></i>)
+                                </center>
+                            </p>
+                        </h3>
+                        <!-- <p>Title: {{review.reviewTitle}}</p>-->
+                        <p>{{review.reviewComment}}</p>
+
+                    </div>
+                </div>
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            </div>
+        </div>
+        <h1 v-else><center>This product have no reviews </center></h1>
+
+        <div id="myModal" class="modal">
+
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>The product is now in your shopping cart!</p>
+                <button class="button-buy" onclick="window.location.href = 'cart.html';"> To shopping
+                    cart!</button>
+                <button class="button-back-message" onclick="window.location.href = '';">Continue
+                    shopping</button>
+            </div>
+        </div>
+        <br>
+        <center> <button type="submit" class="btn btn-review blackbutton" data-toggle="modal"
+                data-target="#addReviewModal"> Add Review
+            </button></center>
+        <!-- Add USER Modal Start -->
+
+        <!-- Add USER Modal End -->
+
+        <br>
+
+        <!-- Add Review Modal Start -->
+        <div class="modal fade" id="addReviewModal" tabindex="-1" aria-labelledby="addReviewModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h3 class="modal-title">Write your review!</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                    <%if (locals.session.user) { %>
+                        <div class="modal-body">
+
+                            <form id="formAdd">
+                                <div class="form-group">
+                                    <label for="ReviewComment" ></label>
+                                    <input type="text" class="form-control" id="addReviewComment" placeholder="Add your comment">
+                                </div>
+                                <div class="stars-container">
+                                    <div class="stars">
+                                        <i class="fa-solid fa-star star-class fa-2x"></i>
+                                        <i class="fa-solid fa-star star-class fa-2x"></i>
+                                        <i class="fa-solid fa-star star-class fa-2x"></i>
+                                        <i class="fa-solid fa-star star-class fa-2x"></i>
+                                        <i class="fa-solid fa-star star-class fa-2x"></i>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary blackbutton float-right"
+                                    v-on:click="addReview()">Post
+                                    Review</button>
+                            </form>
+
+                        </div>
+                        <% }else{ %>
+
+
+                            <p style="text-align:center;">Log in to write a review</p>
+                            <%}%>
+                </div>
+
+            </div>
+        </div>
+        <!-- Add Review Modal End -->
+
+
+
+
+
+
+
+        <!--footer börjar -->
+        <footer>
+            <%- include('../partials/footer'); %>
+        </footer>
+        <!--footer slut -->
+
+    </div>
+
+    <script src="http://code.jquery.com/jquery-3.5.1.min.js "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js "></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js "></script>
+    <script src="node-modules/rater-js/index.js"></script>
+    <script>
+        var slideIndex = 1;
+        console.log(slideIndex)
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            var i;
+            console.log(n)
+            var slides = document.getElementsByClassName("mySlides");
+            var dots = document.getElementsByClassName("dot");
+            if (n > slides.length) {
+                slideIndex = 1
+            }
+            if (n < 1) {
+                slideIndex = slides.length
+            }
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+
+            }
+            slides[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " active";
+        }
+    </script>
+
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                products: {},
+                categories: [],
+                reviews: [],
+                averageRating: 0,
+            },
+            methods: {
+                showProductByProductID(productID) {
+                    window.location.href = "/public/products/" + productID
+                },
+
+                getReviewsByProductID(productID) {
+                    window.location.href = "/public/reviews/" + productID
+                },
+                addToCart(productID) {
+                    $.ajax({
+                        url: '/cart/add/' + productID,
+                        type: 'GET',
+                        success: () => {
+                            window.location.reload()
+                        }
+                    });
+                },
+                addReview() {
+                    var rating;
+                    const stars = document.querySelectorAll('.stars i');
+                    var count = 0;
+                    for (let i = 0; i < stars.length; i++) {
+                        if (stars[i].classList.contains("stars-active")) {
+                            count++;
+                        }
+                    }
+                    rating = count
+                    var location = window.location.href
+                    var productID = location.slice(38)
+                    var review = {
+                        reviewTitle: $('#addReviewTitle').val(),
+                        reviewComment: $('#addReviewComment').val(),
+                        rating: rating,
+                        productID: productID,
+                    }
+                    $.ajax({
+                        url: '/review',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(review),
+                        processData: false,
+                        success: () => {
+                        }
+                    })
+                    window.location.reload()
+                },
+
+
+            },
+
+            addToCart(productID) {
+                $.ajax({
+                    url: '/cart/add/' + productID,
+                    type: 'GET',
+                    success: () => {
+                        window.location.reload()
+                    }
+                });
+            },
+
+
+
+            mounted() {
+                var location = window.location.href
+                var productID = location.slice(38)
+                var self = this;
+                $.getJSON("/product/" + productID, function (jsondata) {
+                    var productImage = jsondata.productImage.slice(2)
+                    jsondata.productImage = productImage
+                    self.products = jsondata
+                });
+
+                $.getJSON("/reviews/" + productID, function (jsondata) {
+                    self.reviews = jsondata
+
+                    //calculate avrage rating
+                    var average = 0;
+                    var temp = 0;
+                    for (let i = 0; i < self.reviews.length; i++) {
+                        temp += self.reviews[i].rating
+                    }
+                    average = temp / self.reviews.length
+                    
+                    self.averageRating = (average.toFixed(1)+' ('+self.reviews.length+' reviews)');
+                    if(isNaN(average.toFixed(1))){
+                        self.averageRating = "No reviews "
+                    }
+
+                    setTimeout(function () {
+                        showSlides(1);
+                    }, 100);
+
+                });
+                const stars = document.querySelectorAll('.stars i');
+                const starcontainer = document.querySelectorAll(".stars")
+                for (let i = 0; i < stars.length; i++) {
+                    stars[i].addEventListener("click", () => {
+                        console.log("click")
+                        starcontainer[0].classList.add("stars-disabled");
+                        for (let f = 0; f < stars.length; f++) {
+                            if (f <= i) {
+                                stars[f].classList.add("stars-active");
+                            }
+                        }
+                    })
+                }
+
+            }
+        });
+    </script>
+
+</body>
+
+</html>

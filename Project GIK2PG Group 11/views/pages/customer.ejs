@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head'); %>
+        <title>CUSTOMER PANEL</title>
+
+</head>
+
+<body>
+    <!--header börjar -->
+    <header>
+        <%- include('../partials/header'); %>
+    </header>
+    <!--header slut -->
+
+    <!--Korg börjar -->
+    <div class="cart-background" id="app">
+        <div class="cart-container">
+            <h2 class="cart-heading">Order history</h2>
+            <div class="cart">
+                <div class="cart-body">
+                    <table class="table-striped justify-content-center container-fluid" style="text-align:center;">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="order in orders" v-bind:key="order.orderID">
+                                <th scope="row">#{{order.orderID}}</th>
+                                <td>{{order.orderStatus}}</td>
+                                <td>{{order.orderDate}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#updateOrderModal"
+                                        v-on:click="showOrderInUpdateForm(order.orderID)">
+                                        View order
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <br>
+            <h2 class="cart-heading">Account Information</h2>
+            <div class="cart">
+                <div class="cart-body ">
+                    <div class="form-group">
+                        <label class="label1" readonly><b>User ID</b></label> <label for="userID" class="label2">#{{
+                            users.userID }}</label>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label class="label1"><b>Firstname</b></label> <label for="firstname" class="label2">{{
+                            users.firstName }}</label>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label class="label1"><b>Lastname</b></label> <label for="lastname" class="label2">{{
+                            users.lastName }}</label>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label class="label1" readonly><b>username</b></label> <label for="username" class="label2">{{
+                            users.userName }}</label>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label class="label1"><b>Adress</b></label> <label for="adress" class="label2">{{
+                            users.adress }}</label>
+                    </div>
+                    <hr>
+
+                    <div class="form-group">
+                        <label class="label1"><b>Password</b></label> <label class="label2">Edit yor account to
+                            change passsword</label>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label hidden><b>Role</b></label> <label for="role" hidden><b>{{ users.role }}</b></label>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateUserModal"
+                        v-on:click="showUserInUpdateForm(users.userID)">
+                        Manage Account
+                    </button>
+
+                </div>
+            </div>
+            <hr>
+            <hr>
+            <h2 class="cart-heading">My Reviews</h2>
+            <div class="cart">
+                <div class="cart-body ">
+                    <table class="table-striped justify-content-center container-fluid" style="text-align:center;">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col">Comment</th>
+                                <th scope="col">Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="review in reviews" v-bind:key="review.reviewID">
+                                <th scope="row">#{{ review.reviewID }}</th>
+                                <td>{{ review.rating }}</td>
+                                <td>{{ review.reviewComment }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#updateReviewModal"
+                                        v-on:click="showReviewInUpdateForm(review.reviewID)">
+                                        Manage
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <span class="span-buttom"></span>
+        </div>
+
+        <div class="modal fade" id="updateUserModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Change my account information</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formUpdate">
+                            <div class="form-group">
+                                <label for="userID">ID</label>
+                                <input type="text" class="form-control" name="updateUserID" id="updateUserID" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" name="updateUsername" id="updateUsername" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="firstName">Firstname</label>
+                                <input type="text" class="form-control" name="updateFirstName" id="updateFirstName">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lastName">Lastname</label>
+                                <input type="text" class="form-control" name="updateLastName" id="updateLastName">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="adress">Adress</label>
+                                <input type="text" class="form-control" name="updateAdress" id="updateAdress">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">password</label>
+                                <input type="text" class="form-control" name="updatePassword" id="updatePassword">
+                            </div>
+
+                            <div class="form-group">
+                                <!-- <button type="button" class="btn btn-danger float-right" data-dismiss="modal"
+                                    v-on:click="deleteUser">Delete</button>-->
+                                <input type="button" style="background-color: #27ae60;" class="btn btn-primary float-right" value="Update"
+                                    v-on:click="updateUser" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="updateReviewModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Review</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formUpdate">
+                            <div class="form-group">
+                                <label for="reviewID">ID</label>
+                                <input type="text" class="form-control" name="updateReviewID" id="updateReviewID"
+                                    readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="rating">Rating</label>
+                                <select class="form-control" id="updateRating">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                            <!-- <div class="form-group">
+                                <label for="reviewTitle">Title</label>
+                                <input type="text" class="form-control" name="updateReviewTitle" id="updateReviewTitle">
+                            </div>-->
+
+                            <div class="form-group">
+                                <label for="reviewComment">Comment</label>
+                                <input type="text" class="form-control" name="updateReviewComment"
+                                    id="updateReviewComment">
+                            </div>
+
+                            <div class="form-group">
+                                <button type="button" class="btn btn-danger float-right" data-dismiss="modal"
+                                    v-on:click="deleteReview">Delete</button>
+                                <input type="button" class="btn btn-primary float-right" value="Update"
+                                    v-on:click="updateReview" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!--update order modal-->
+        <div class="modal fade" id="updateOrderModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div>
+                        <form id="formUpdateOrder">
+                            <h5 class="modal-title" >View order </h5>
+                            <table class="table-striped justify-content-center container-fluid"
+                                style="text-align:center;">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                    </tr>
+                                    
+                                </thead>
+                                
+                                <tbody>
+                                    <tr v-for="product in orderProducts" v-bind:key="product.orderID">
+                                        <!--<th  id="updateOrderID">#{{ product.orderID }}</th>-->
+                                        <th scope="row"><img :src="product.productImage" style="width: 100px; height: 120px;" alt="Watch"></th>
+                                        <td id="updateProductName">{{ product.productName}} </td>
+                                        <td id="updatePrice">{{ product.price}} kr</td>
+                                        <td id="updateQuantity">{{product.quantity}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p id="updateTotalPrice"><b>Total price: {{total}}kr</b></p>
+                            <!--
+                                <div>
+                                    <div v-for="product in orderProducts" v-bind:key="product.orderID">
+                                        <img :src="product.productImage" width="100px" alt="Watch">
+                                        <div>
+                                            <h3 id="updateOrderID">{{ product.orderID }}</h3>
+                                             <p id="updateOrder">{{ order.description }}</p>
+                                            <p id="updatePrice">{{ product.price}} kr</p>
+                                            <p id="updateQuantity">Quantity: {{product.quantity}}</p>
+                                            <p id="updateTotalPrice">Total price: {{total}}</p>
+                                        </div>
+                                    </div>
+                                </div>-->
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <%- include('../partials/footer'); %>
+    </footer>
+    <!-- Update User Modal End -->
+    <!-- Update User Modal End -->
+
+
+    <script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- Script Start -->
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                users: {},
+                orders: [],
+                reviews: [],
+                orderProducts: [],
+                total: '',
+            },
+            methods: {
+
+                /* Order history
+                showOrderHistory(userID) {
+                    var self = this
+                    $.ajax({
+                        url: 'order/user/' + userID,
+                        type: 'GET',
+                        success: (order) => {
+                            self.orders = order
+                        }
+                    });
+                    $('#updateUserModal').modal('show');
+                },*/
+
+
+                /* User info*/
+                showUserInUpdateForm(userID) {
+                    $.ajax({
+                        url: '/user/' + userID,
+                        type: 'GET',
+                        success: (user) => {
+
+
+                            $('#updateUserID').val(user.userID);
+                            $('#updateUsername').val(user.userName);
+                            $('#updateFirstName').val(user.firstName);
+                            $('#updateLastName').val(user.lastName);
+                            $('#updateRole').val(user.role);
+                            $('#updateAdress').val(user.adress);
+                        }
+                    });
+                    $('#updateUserModal').modal('show');
+                },
+
+                //update User
+                updateUser() {
+                    var user = {
+                        userName: $('#updateUserModal #updateUsername').val(),
+                        firstName: $('#updateUserModal #updateFirstName').val(),
+                        lastName: $('#updateUserModal #updateLastName').val(),
+                        password: $('#updateUserModal #updatePassword').val(),
+                        adress: $('#updateUserModal #updateAdress').val(),
+                        userID: $('#updateUserModal #updateUserID').val(),
+                        role: $('#updateUserModal #updateRole').val()
+                    };
+
+                    $.ajax({
+                        url: '/customer/user/' + user.userID,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(user),
+                        success: () => {
+                            var self = this;
+                            $.getJSON('/customer/', function (jsondata) {
+                                self.users = jsondata;
+                            });
+                            $('#updateUserModal').modal('hide');
+                            window.location.reload()
+                        },
+                    });
+                },
+
+                deleteUser() {
+                    var user = {
+                        userID: $('#updateUserModal #updateUserID').val()
+                    }
+                    $.ajax({
+                        url: '/user/' + user.userID,
+                        type: 'DELETE',
+                        success: () => {
+                            var self = this;
+                            $.getJSON("/users/", function (jsondata) {
+                                self.users = jsondata;
+                                $('updateUserModal').modal('hide');
+                            });
+                            /*window.location.reload()*/
+                        },
+                    });
+                },
+
+
+
+                /*Reviews info*/
+
+                showReviewInUpdateForm(reviewID) {
+                    $.ajax({
+                        url: '/review/' + reviewID,
+                        type: 'GET',
+                        success: (review) => {
+
+
+                            $('#updateReviewID').val(review.reviewID);
+                            $('#updateRating').val(review.rating);
+                            $('#updateReviewTitle').val(review.reviewTitle);
+                            $('#updateReviewComment').val(review.reviewComment);
+                        }
+                    });
+                    $('#updateReviewModal').modal('show');
+                },
+
+                //update User
+                updateReview() {
+                    var review = {
+                        reviewID: $('#updateReviewModal #updateReviewID').val(),
+                        rating: $('#updateReviewModal #updateRating').val(),
+                        reviewTitle: $('#updateReviewModal #updateReviewTitle').val(),
+                        reviewComment: $('#updateReviewModal #updateReviewComment').val()
+                    };
+
+                    $.ajax({
+                        url: '/review/' + review.reviewID,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(review),
+                        success: () => {
+                            var self = this;
+                            $.getJSON('/customer/reviews/', function (jsondata) {
+                                self.reviews = jsondata;
+                            });
+                            $('#updateReviewModal').modal('hide');
+                            window.location.reload()
+                        },
+                    });
+                },
+
+                deleteReview() {
+                    var review = {
+                        reviewID: $('#updateReviewModal #updateReviewID').val()
+                    }
+                    $.ajax({
+                        url: '/review/' + review.reviewID,
+                        type: 'DELETE',
+                        success: () => {
+                            var self = this;
+                            $.getJSON("/review/", function (jsondata) {
+                                self.reviews = jsondata;
+                                $('updateReviewModal').modal('hide');
+                            });
+                            window.location.reload()
+
+                        },
+                    });
+                },
+
+                showOrderInUpdateForm(orderID) {
+                    $.ajax({
+                        url: '/order/details/' + orderID,
+                        type: 'GET',
+                        success: (order) => {
+                            var self = this;
+                            self.orderProducts = undefined;
+                            self.orderProducts = order
+                            var sum = 0;
+                            for (let o of self.orderProducts) {
+                                sum = sum + o.price
+                            }
+                            self.total = sum
+
+
+                        }
+                    });
+                    $('#updateOrderModal').modal('show');
+                },
+
+                /* logOut() {
+                     sessionStorage.removeItem('username');
+                     sessionStorage.removeItem('firstName');
+                     sessionStorage.removeItem('lastName');
+                     sessionStorage.removeItem('role');
+                     sessionStorage.removeItem('userID');
+                     window.location.href = "http://localhost:3000/";
+ 
+                 }*/
+
+
+            },
+            mounted() {
+                var self = this;
+                $.getJSON("/customer/", function (jsondata) {
+
+                    self.users = jsondata;
+                });
+                $.getJSON("/customer/reviews/", function (jsondata) {
+                    self.reviews = jsondata;
+                });
+
+                $.getJSON("/customer/order", function (jsondata) {
+                    self.orders = jsondata;
+                });
+            },
+        });
+    </script>
+</body>
+
+</html>
