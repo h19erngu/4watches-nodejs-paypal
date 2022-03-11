@@ -1,7 +1,7 @@
 const routes = require('express').Router();
 const dbService = require('./database'); // för att prata med databasen 
 const multer = require('multer');
-const upload = multer({ dest: '/views/upload/' });
+const upload = multer({ dest: '/tmp/upload/' });
 const fs = require("fs").promises;
 const nodemailer = require('nodemailer');
 require('dotenv').config();
