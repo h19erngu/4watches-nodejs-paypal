@@ -32,8 +32,8 @@ VALUES(
 
 
 INSERT INTO user (username, password, role, adress, firstname, lastname)
-VALUES('admin','123','Admin', 'SOMETHING', 'first', 'last'),
-(      'notadmin','123','Customer', 'SOMEWHERE', 'firstname', 'lastname');
+VALUES('admin','$2a$11$2JiyD8/6c09S0OnQ3ELmzu.GRgKw.O0V6Iz/46xYIrzd.G/hWYL3y','Admin', 'SOMETHING', 'first', 'last'),
+(      'notadmin','$2a$11$EfgM8dGfIOUxPaj8WSQXeO4T2WGinXceWgJKXlf2R2gjc3LtBvUmG','Customer', 'SOMEWHERE', 'firstname', 'lastname');
 --DROP TABLE IF EXISTS product;
 CREATE TABLE IF NOT EXISTS product(
         productID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
