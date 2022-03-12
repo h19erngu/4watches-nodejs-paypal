@@ -7,7 +7,7 @@ const port = 3000;
 
 
 
-const session = require('express-session');
+const session = require('cookie-session');
 app.use(session({ secret: 'ssshhhhh', saveUninitialized: true, resave: true }));
 app.set('view engine', 'ejs');
 
@@ -32,7 +32,7 @@ app.use(routes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.listen(port, () => {
+app.listen(process.env.PORT || 5000, () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
 
