@@ -262,8 +262,9 @@
 
             mounted() {
                 var location = window.location.href
-                var productID = location.slice(48)
+                var productID = location.slice(50)
                 var self = this;
+                console.log(productID)
                 $.getJSON("/product/" + productID, function (jsondata) {
                     var productImage = jsondata.productImage.slice(2)
                     jsondata.productImage = productImage
