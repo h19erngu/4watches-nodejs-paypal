@@ -52,13 +52,9 @@ routes.post('/login', async (req, res) => {
 
 //LOGOUT
 routes.get('/logout', async (req, res) => {
-    req.session.destroy((error) => {
-        res.redirect('/public/home')
-        if (error) {
-            console.log(error)
-        }
+    req.session = null
+    res.redirect('/public/home')
     });
-});
 
 //Startpage?
 routes.get(['/public/home', '/', '/public'], (req, res) => {
@@ -1057,8 +1053,8 @@ routes.post('/pay', async (req, res) => {
             "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": "http://localhost:3000/success",
-            "cancel_url": "http://localhost:3000/cancel"
+            "return_url": "https://fourwatches.herokuapp.com/success",
+            "cancel_url": "https://fourwatches.herokuapp.com/cancel"
         },
         "transactions": [{
             "amount": {
