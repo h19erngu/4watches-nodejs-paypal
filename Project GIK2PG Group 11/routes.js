@@ -849,7 +849,6 @@ routes.get('/productsByCategory/:category', async (req, res) => {
 
 routes.get('/cartcontent', async (req, res) => {
     var sess = req.session
-    //console.log(sess.cart)
     res.send(sess.cart)
 });
 
